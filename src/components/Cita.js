@@ -10,12 +10,18 @@ const Cita = ({cita,eliminarCita}) => {
     <p>Fecha : <span>{cita.fecha}</span></p>
     <p>Hora : <span>{cita.hora}</span></p>
     <p>Sintomas : <span>{cita.sintomas}</span></p>
-
-    <button 
-        className="button-eliminar u-full-width"
-        onClick={()=> eliminarCita(cita.id)}>
-        Eliminar &times;
-    </button>
+    <div className='flex justify-between'>
+        <button 
+            className="py-2 px-10 bg-indigo-600 hover:bg-indigo-700 text-white font-bold uppercase rounded-lg"
+            onClick={()=> eliminarCita(cita.id)}>
+            Eliminar &times;
+        </button>
+        <button 
+            className="py-2 px-10 bg-indigo-600 hover:bg-indigo-700 text-white font-bold uppercase rounded-lg"
+            onClick={()=> eliminarCita(cita.id)}>
+            Eliminar &times;
+        </button>
+    </div>
 </div> );
 }
  

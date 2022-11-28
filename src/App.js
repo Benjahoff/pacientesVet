@@ -19,6 +19,7 @@ function App() {
     ])
   }
   const eliminarCita = key => {
+    console.log(key);
     const nuevasCitas = citas.filter( cita=>cita.id !==key )
     setCitas(nuevasCitas);
   }
