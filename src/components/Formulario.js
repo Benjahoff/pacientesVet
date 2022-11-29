@@ -1,8 +1,7 @@
-import React, { Fragment, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
+import React, { Fragment, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
-const Formulario = ({ crearCita }) => {
+const Formulario = ({ crearCita, paciente }) => {
   //Crear State de Citas
   const [cita, setCita] = useState({
     mascota: "",
@@ -12,6 +11,19 @@ const Formulario = ({ crearCita }) => {
     sintomas: "",
   });
   const [error, setError] = useState(false);
+  
+  useEffect(()=>{
+    if (Object.keys(paciente).length > 0) {
+      setCita({
+        'mascota': paciente['mascota'],
+        'propietario': paciente['propietario'],
+        'fecha': paciente['fecha'],
+        'hora': paciente['hora'],
+        'sintomas': paciente['sintomas'],
+      })
+    }
+  },[paciente]);
+  
   const handleChange = (e) => {
     setCita({
       ...cita,
@@ -38,8 +50,7 @@ const Formulario = ({ crearCita }) => {
     }
     setError(false);
 
-    //Asignar id
-    cita.id = uuidv4();
+    
     //Crear cita
     crearCita(cita);
     //Reiniciar Form
@@ -54,13 +65,14 @@ const Formulario = ({ crearCita }) => {
 
   return (
     <Fragment>
-      <h2>Crear cita</h2>
+      <h2>{paciente.id ? 'Editar Cita': 'Crear cita'}</h2>
       {error ? (
         <p className="alerta-error"> Todos los campos son obligatorios</p>
       ) : null}
       <form onSubmit={submitCita}>
-        <label>Nombre Mascota</label>
+        <label htmlFor="nombre">Nombre Mascota</label>
         <input
+          id="nombre"
           type="text"
           name="mascota"
           className="u-full-width"
@@ -69,8 +81,9 @@ const Formulario = ({ crearCita }) => {
           value={mascota}
         />
 
-        <label>Nombre Dueño</label>
+        <label htmlFor="propietario">Nombre Dueño</label>
         <input
+          id="propietario"
           type="text"
           name="propietario"
           className="u-full-width"
@@ -79,34 +92,37 @@ const Formulario = ({ crearCita }) => {
           value={propietario}
         />
 
-        <label>Fecha</label>
+        <label htmlFor="fecha">Fecha</label>
         <input
           type="date"
           name="fecha"
+          id="fecha"
           className="u-full-width"
           onChange={handleChange}
           value={fecha}
         />
 
-        <label>Hora</label>
+        <label htmlFor="hora">Hora</label>
         <input
           type="time"
           name="hora"
+          id="hora"
           className="u-full-width"
           onChange={handleChange}
           value={hora}
         />
 
-        <label>Sintomas</label>
+        <label htmlFor="Sintomas">Sintomas</label>
         <textarea
           className="u-full-width"
           name="sintomas"
+          id="Sintomas"
           placeholder="Sintomas de la mascota"
           onChange={handleChange}
           value={sintomas}
         ></textarea>
         <button type="submit" className="u-full-width button-primary">
-          Agregar Cita
+          {paciente.id ? 'Editar Cita': 'Agregar Cita'}
         </button>
       </form>
     </Fragment>

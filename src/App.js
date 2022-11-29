@@ -1,56 +1,72 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import Formulario from './components/Formulario';
 import Cita from './components/Cita';
+import { v4 as uuidv4 } from "uuid";
 
 function App() {
 
-  let citasIniciales = JSON.parse(localStorage.getItem('citas'));
-  if(!citasIniciales){
-    citasIniciales = [];
-  }
+  
   //Arreglo de citas
-  const [citas, setCitas] = useState(citasIniciales);
+  const [citas, setCitas] = useState([]);
+  const [paciente, setPaciente] = useState({});
+  
+  useEffect(() => {
+    let citasIniciales = JSON.parse(localStorage.getItem('citas')) ?? [];
+    setCitas(citasIniciales)
+  }, [])
+
+  useEffect(() => {
+      localStorage.setItem('citas', JSON.stringify(citas))
+  }, [citas])
 
   //Agregar cita
   const crearCita = cita => {
-    setCitas([
-      ...citas,
-      cita
-    ])
-  }
-  const eliminarCita = key => {
-    console.log(key);
-    const nuevasCitas = citas.filter( cita=>cita.id !==key )
-    setCitas(nuevasCitas);
-  }
-  useEffect(() => {
-    if(citasIniciales){
-      localStorage.setItem('citas', JSON.stringify(citas))
+    if (paciente.id) {
+      cita.id = paciente.id
+      const citasActualizadas = citas.map(citaTemporal => citaTemporal.id === cita.id ? cita : citaTemporal)
+      setCitas(citasActualizadas);
+      setPaciente({})
     } else {
-      localStorage.setItem('citas', JSON.stringify([]))
+      //Asignar id
+      cita.id = uuidv4();
+      setCitas([
+        ...citas,
+        cita
+      ])
     }
-  }, [citas,citasIniciales])
+  }
+
+  const eliminarCita = key => {      
+      const nuevasCitas = citas.filter(cita => cita.id !== key)
+      setCitas(nuevasCitas);
+  }
+
+
+  
   return (
     <Fragment>
-    <h1>Administrador de Pacientes</h1>
-    <div className="container">
-      <div className="row">
-        <div className="one-half column">
-          <Formulario 
-          crearCita = {crearCita}/>
-        </div>
-        <div className="one-half column">
-          <h2>Administra tus citas</h2>
+      <h1>Administrador de Pacientes</h1>
+      <div className="container">
+        <div className="row">
+          <div className="one-half column">
+            <Formulario
+              crearCita={crearCita} 
+              paciente={paciente}/>
+          </div>
+          <div className="one-half column">
+            <h2>Administra tus citas</h2>
 
-          {citas.map(cita => (
-            <Cita 
-              key={cita.id}
-              cita={cita}
-              eliminarCita={eliminarCita}/>
-          ))}
+            {citas.map(cita => (
+              <Cita
+                key={cita.id}
+                cita={cita}
+                eliminarCita={eliminarCita}
+                setPaciente={setPaciente}
+                />
+            ))}
+          </div>
         </div>
       </div>
-    </div>
     </Fragment>
   );
 }
